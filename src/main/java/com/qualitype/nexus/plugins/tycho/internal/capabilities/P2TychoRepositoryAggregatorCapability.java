@@ -63,31 +63,34 @@ public class P2TychoRepositoryAggregatorCapability extends CapabilitySupport {
     @Override
     public void onCreate() throws Exception {
         configuration = createConfiguration(context().properties());
-    }
-
-    @Override
-    public void onLoad() throws Exception {
-        configuration = createConfiguration(context().properties());
-    }
-
-    @Override
-    public void onUpdate() throws Exception {
-        configuration = createConfiguration(context().properties());
-    }
-
-    @Override
-    public void onRemove() throws Exception {
-        configuration = null;
-    }
-
-    @Override
-    public void onActivate() {
         service.addConfiguration(configuration);
     }
 
     @Override
-    public void onPassivate() {
+    public void onLoad() throws Exception {
+        onCreate();
+    }
+
+    @Override
+    public void onUpdate() throws Exception {
+        onRemove();
+        onCreate();
+    }
+
+    @Override
+    public void onRemove() throws Exception {
         service.removeConfiguration(configuration);
+        configuration = null;
+    }
+
+    @Override
+    public void onActivate() throws Exception {
+        service.enableAggregationFor(configuration);
+    }
+
+    @Override
+    public void onPassivate() throws Exception {
+        service.disableAggregationFor(configuration);
     }
 
     @Override
